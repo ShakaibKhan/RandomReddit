@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Random Reddit</string>
+    <string name="start_browsing_text">Start Browsing</string>
+    <string-array
+        name="subreddit_list">
+        <item>pics</item>
+        <item>gifs</item>
+        <item>funny</item>
+        <item>gaming</item>
+        <item>aww</item>
+        <item>AdviceAnimals</item>
+        <item>wholesomememes</item>
+        <item>food</item>
+        <item>mildlyinteresting</item>
+        <item>OldSchoolCool</item>
+    </string-array>
+</resources>
