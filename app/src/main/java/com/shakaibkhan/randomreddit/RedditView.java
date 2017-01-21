@@ -1,5 +1,6 @@
 package com.shakaibkhan.randomreddit;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
+import java.io.Serializable;
+import java.util.Hashtable;
+
 /**
  * Created by shakaibkhan on 2017-01-05.
  */
@@ -24,6 +28,10 @@ public class RedditView extends FragmentActivity {
     private ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
     private RedditParser redditParser;
+    private SubredditManager srm;
+    private Hashtable currentLinks;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,11 +42,16 @@ public class RedditView extends FragmentActivity {
         this.mViewPager.setAdapter(mPagerAdapter);
         redditParser = new RedditParser("nsfw_gifs");
         redditParser.execute("");
-//        mImageDisplay = (ImageView) findViewById(R.id.image_displayed);
 
-//        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(mImageDisplay);
-//        Glide.with(this).load().diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mImageDisplay);
+        //Try to get the initially loaded image urls
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        Serializable subredditLinks = bundle.getSerializable("InitialLinks");
+        this.currentLinks = (Hashtable)subredditLinks;
 
+        // Load another table of links
+        String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
+        //this.srm = new SubredditManager(subreddits,false,);
     }
 
     @Override

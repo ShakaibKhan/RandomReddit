@@ -3,6 +3,7 @@ package com.shakaibkhan.randomreddit;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Message;
 import android.widget.Toast;
 
 import okhttp3.OkHttpClient;
@@ -19,17 +20,21 @@ import java.util.HashMap;
  */
 
 public class RedditParser extends AsyncTask<String, String, String> {
-    String subreddit;
+
+    public String subreddit;
     final private String REDDIT_BASE_URL = "https://www.reddit.com/r/";
-    String redditURL ;
-    String after = null;
-    int position = 0;
-    int final_position = 0;
-    OkHttpClient webClient = new OkHttpClient();
-    String[] redditLinks = new String[25];
-    String[] redditTitles = new String[25];
-    String redditResponse;
-    Handler handler = null;
+    public String redditURL ;
+    public String after = null;
+    public int position = 0;
+    public int final_position = 0;
+    public OkHttpClient webClient = new OkHttpClient();
+
+    public String[] redditLinks = new String[25];
+    public String[] redditTitles = new String[25];
+    public String[] redditOver_18 = new String[25];
+
+    public String redditResponse;
+    private Handler handler = null;
 
     RedditParser(String sr, Handler handle){
         this.subreddit = sr;
@@ -106,6 +111,7 @@ public class RedditParser extends AsyncTask<String, String, String> {
                     }
 
                     redditTitles[final_position] = redditJson.getString("title").replace(";","&").replace("&amp&","&");
+                    redditOver_18[final_position] = redditJson.getString("over_18").replace(";","&").replace("&amp&","&");
                     final_position++;
                 }
             }
@@ -113,8 +119,11 @@ public class RedditParser extends AsyncTask<String, String, String> {
         }catch(JSONException je){
             je.printStackTrace();
         }
+        //Once we are finished we tell the handler we are finished and pass the links we found to
         if(this.handler != null){
-            this.handler.sendEmptyMessage(0);
+            Message message = handler.obtainMessage();
+            message.obj = this.subreddit;
+            this.handler.sendMessage(message);
         }
 
     }

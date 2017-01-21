@@ -8,11 +8,15 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+
 
 public class MainActivity extends Activity {
 
     public Button mStartButton;
     public ProgressBar mSpinner;
+    SubredditManager subredditManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +25,17 @@ public class MainActivity extends Activity {
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
         mStartButton = (Button)findViewById(R.id.btn_start_browsing);
         mSpinner = (ProgressBar) findViewById(R.id.spinner);
-        SubredditManager subredditManager = new SubredditManager(subreddits,mSpinner,mStartButton,true);
+        this.subredditManager = new SubredditManager(subreddits,mSpinner,mStartButton,true);
         subredditManager.getAllSubredditStarted();
 
     }
 
     public void openReddit(View view){
         Intent openBrowser = new Intent(this, RedditView.class);
+        Hashtable ht = this.subredditManager.getSubredditLinks();
+        Bundle bundle = new Bundle();
+        bundle.putString("InitialLinks",ht.toString());
+        openBrowser.putExtras(bundle);
         startActivity(openBrowser);
     }
 

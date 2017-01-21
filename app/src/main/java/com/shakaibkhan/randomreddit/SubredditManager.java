@@ -2,13 +2,17 @@ package com.shakaibkhan.randomreddit;
 
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Created by shakaibkhan on 2017-01-13.
@@ -17,13 +21,19 @@ import java.util.Hashtable;
 public class SubredditManager {
 
     public String[] subredditNames = new String[10];
-    private Hashtable subredditFeed = new Hashtable();
     private Enumeration subs ;
     private Handler handler ;
     public int numberOfFinishedSubreddits = 0;
     public ProgressBar mSpinner;
     public Button mStartButton;
     public boolean startPage;
+
+    //
+    public Hashtable subredditLinks = new Hashtable();
+    public Hashtable subredditAfter = new Hashtable();
+    public Hashtable subredditTitles = new Hashtable();
+    public Hashtable subredditOver_18 = new Hashtable();
+    private Hashtable subredditFeed = new Hashtable();
 
     SubredditManager(String[] srs, ProgressBar spin, Button btn, boolean start){
         this.startPage = start;
@@ -33,15 +43,20 @@ public class SubredditManager {
         this.handler = new Handler(){
             @Override
             public void handleMessage(Message message){
-                switch(message.what){
-                    case 0:
-                        if(startPage){
-                            numberOfFinishedSubreddits++;
-                            if(numberOfFinishedSubreddits == subredditNames.length){
-                                mSpinner.setVisibility(View.GONE);
-                                mStartButton.setVisibility(View.VISIBLE);
-                            }
+                if(message.obj != null){
+                    if(startPage){
+                        numberOfFinishedSubreddits++;
+                        if(numberOfFinishedSubreddits == subredditNames.length){
+                            mSpinner.setVisibility(View.GONE);
+                            mStartButton.setVisibility(View.VISIBLE);
                         }
+                    }
+                    //Get the links returned by the parser
+                    RedditParser rp = (RedditParser) subredditFeed.get(message.obj);
+                    subredditLinks.put(message.obj,getRidOfNulls(rp.redditLinks));
+                    subredditAfter.put(message.obj,rp.after);
+                    subredditTitles.put(message.obj,getRidOfNulls(rp.redditTitles));
+                    subredditOver_18.put(message.obj,getRidOfNulls(rp.redditOver_18));
                 }
             }
         };
@@ -52,11 +67,51 @@ public class SubredditManager {
         subs = subredditFeed.keys();
     }
 
+    SubredditManager(String[] srs, boolean start, Hashtable afters){
+        this.startPage = start;
+        subredditNames = srs;
+        this.handler = new Handler(){
+            @Override
+            public void handleMessage(Message message){
+                if(message.obj != null){
+                    if(startPage){
+                        numberOfFinishedSubreddits++;
+                        if(numberOfFinishedSubreddits == subredditNames.length){
+                            mSpinner.setVisibility(View.GONE);
+                            mStartButton.setVisibility(View.VISIBLE);
+                        }
+                    }
+                    RedditParser rp = (RedditParser) subredditFeed.get(message.obj);
+                    subredditLinks.put(message.obj,rp.redditLinks);
+                }
+            }
+        };
+        for (String srn: subredditNames) {
+            subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)afters.get(subredditNames)));
+        }
+
+        subs = subredditFeed.keys();
+    }
+
     public void getAllSubredditStarted(){
         while(subs.hasMoreElements()){
             RedditParser rp = (RedditParser) subredditFeed.get(subs.nextElement());
             rp.execute("");
         }
+    }
+
+    public String[] getRidOfNulls(String[] array){
+        List<String> arrayWithoutNulls = new ArrayList<String>();
+        for(String s: array){
+            if(s != null && s.length() > 0){
+                arrayWithoutNulls.add(s);
+            }
+        }
+        return (String[])arrayWithoutNulls.toArray(new String[arrayWithoutNulls.size()]);
+    }
+
+    public Hashtable getSubredditLinks(){
+        return this.subredditLinks;
     }
 
 }
