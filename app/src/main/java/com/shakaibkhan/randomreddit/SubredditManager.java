@@ -35,6 +35,8 @@ public class SubredditManager {
     public Hashtable subredditOver_18 = new Hashtable();
     private Hashtable subredditFeed = new Hashtable();
 
+    public LinkManager linkManager;
+
     SubredditManager(String[] srs, ProgressBar spin, Button btn, boolean start){
         this.startPage = start;
         subredditNames = srs;
@@ -67,31 +69,36 @@ public class SubredditManager {
         subs = subredditFeed.keys();
     }
 
-    SubredditManager(String[] srs, boolean start, Hashtable afters){
-        this.startPage = start;
+    SubredditManager(String[] srs, LinkManager lm){
         subredditNames = srs;
+        this.linkManager = lm;
         this.handler = new Handler(){
             @Override
             public void handleMessage(Message message){
                 if(message.obj != null){
-                    if(startPage){
-                        numberOfFinishedSubreddits++;
-                        if(numberOfFinishedSubreddits == subredditNames.length){
-                            mSpinner.setVisibility(View.GONE);
-                            mStartButton.setVisibility(View.VISIBLE);
-                        }
-                    }
+
+                    //Get the links returned by the parser
                     RedditParser rp = (RedditParser) subredditFeed.get(message.obj);
-                    subredditLinks.put(message.obj,rp.redditLinks);
+                    linkManager.newLinks.put(message.obj,getRidOfNulls(rp.redditLinks));
+                    linkManager.newAfter.put(message.obj,rp.after);
+                    linkManager.newTitles.put(message.obj,getRidOfNulls(rp.redditTitles));
+                    linkManager.newOver_18s.put(message.obj,getRidOfNulls(rp.redditOver_18));
                 }
             }
         };
         for (String srn: subredditNames) {
-            subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)afters.get(subredditNames)));
+            subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)lm.currentAfter.get(srn)));
         }
 
         subs = subredditFeed.keys();
     }
+
+    public void loadMoreSubredditContent(String srn, LinkManager lm){
+        this.linkManager = lm;
+        RedditParser rp = (RedditParser) subredditFeed.get(srn);
+        rp.execute("");
+    }
+
 
     public void getAllSubredditStarted(){
         while(subs.hasMoreElements()){
@@ -109,6 +116,7 @@ public class SubredditManager {
         }
         return (String[])arrayWithoutNulls.toArray(new String[arrayWithoutNulls.size()]);
     }
+
 
     public Hashtable getSubredditLinks(){
         return this.subredditLinks;

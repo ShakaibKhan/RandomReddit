@@ -16,6 +16,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -27,9 +28,14 @@ public class RedditView extends FragmentActivity {
     private static final int NUM_PAGES = 100;
     private ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
-    private RedditParser redditParser;
-    private SubredditManager srm;
+    public static LinkManager linkManager;
+
     private Hashtable currentLinks;
+    private Hashtable currentTitles;
+    private Hashtable currentAfters;
+    private Hashtable currentOver_18s;
+
+    public static PostCalculator postCalculator;
 
 
 
@@ -40,18 +46,22 @@ public class RedditView extends FragmentActivity {
         this.mViewPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new RedditView.ScreenSlidePagerAdapter(getSupportFragmentManager());
         this.mViewPager.setAdapter(mPagerAdapter);
-        redditParser = new RedditParser("nsfw_gifs");
-        redditParser.execute("");
+//        redditParser = new RedditParser("pics");
+//        redditParser.execute("");
 
         //Try to get the initially loaded image urls
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        Serializable subredditLinks = bundle.getSerializable("InitialLinks");
-        this.currentLinks = (Hashtable)subredditLinks;
+
+        this.currentLinks = new Hashtable<String,String[]>((HashMap<String,String[]>)bundle.getSerializable("InitialLinks"));
+        this.currentAfters = new Hashtable<String,String>((HashMap<String,String>)bundle.getSerializable("Afters"));
+        this.currentTitles = new Hashtable<String,String[]>((HashMap<String,String[]>)bundle.getSerializable("Titles"));
+        this.currentOver_18s = new Hashtable<String,String[]>((HashMap<String,String[]>)bundle.getSerializable("Over_18"));
 
         // Load another table of links
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
-        //this.srm = new SubredditManager(subreddits,false,);
+        this.linkManager= new LinkManager(currentLinks,currentAfters,currentTitles,currentOver_18s,subreddits);
+        this.postCalculator = new PostCalculator(subreddits);
     }
 
     @Override
@@ -71,11 +81,11 @@ public class RedditView extends FragmentActivity {
         @Override
         public Fragment getItem(int position){
             PostSlidingFragment slidingFragment = new PostSlidingFragment();
-            slidingFragment.setUrl(redditParser.getImageLink());
-            if(redditParser.position == redditParser.final_position){
-                redditParser = new RedditParser(redditParser.subreddit, redditParser.after);
-                redditParser.execute("");
-            }
+            String postSubreddit = postCalculator.getNextSubreddit();
+
+            //Set the title, image url, and age restriction of the post
+            slidingFragment.setUrl(linkManager.getUrl(postSubreddit));
+            slidingFragment.setTitle(linkManager.getTitle(postSubreddit));
             slidingFragment.setFragmentPostion(position);
             return slidingFragment;
         }

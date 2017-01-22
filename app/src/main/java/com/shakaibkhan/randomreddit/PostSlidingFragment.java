@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -20,13 +21,20 @@ import com.bumptech.glide.request.target.Target;
  */
 
 public class PostSlidingFragment extends Fragment {
-    ImageView mImageDisplay;
-    ProgressBar mProgressBar;
-    int fragmentPostion = 0;
-    String url = null;
+    private ImageView mImageDisplay;
+    private ProgressBar mProgressBar;
+    private TextView mPostTitle;
+    private int fragmentPostion = 0;
+
+    private String url = null;
+    private String title = null;
 
     public void setUrl(String urlImage){
         this.url = urlImage;
+    }
+
+    public void setTitle(String title){
+        this.title = title;
     }
 
     @Override
@@ -34,7 +42,10 @@ public class PostSlidingFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post_sliding,container,false);
         mImageDisplay = (ImageView) rootView.findViewById(R.id.image_displayed);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+        mPostTitle = (TextView) rootView.findViewById(R.id.title_displayed);
+
         setImage(url);
+        mPostTitle.setText(this.title);
         return rootView;
     }
 
@@ -53,7 +64,9 @@ public class PostSlidingFragment extends Fragment {
             }
         })
         .into(mImageDisplay);
+
     }
+
 
     public void setFragmentPostion(int postion){
         fragmentPostion = postion;

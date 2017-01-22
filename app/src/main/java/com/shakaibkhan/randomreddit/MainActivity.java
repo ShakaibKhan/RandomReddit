@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 
 
@@ -32,9 +33,17 @@ public class MainActivity extends Activity {
 
     public void openReddit(View view){
         Intent openBrowser = new Intent(this, RedditView.class);
+        //Get all of the initally loaded reddit info
         Hashtable ht = this.subredditManager.getSubredditLinks();
+        Hashtable av = this.subredditManager.subredditAfter;
+        Hashtable rt = this.subredditManager.subredditTitles;
+        Hashtable oe = this.subredditManager.subredditOver_18;
+
         Bundle bundle = new Bundle();
-        bundle.putString("InitialLinks",ht.toString());
+        bundle.putSerializable("InitialLinks",ht);
+        bundle.putSerializable("Afters",av);
+        bundle.putSerializable("Titles",rt);
+        bundle.putSerializable("Over_18",oe);
         openBrowser.putExtras(bundle);
         startActivity(openBrowser);
     }

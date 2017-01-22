@@ -55,7 +55,7 @@ public class RedditParser extends AsyncTask<String, String, String> {
     }
 
     private void buildUrl(){
-        this.redditURL = REDDIT_BASE_URL +this.subreddit+".json?limit=25";
+        this.redditURL = REDDIT_BASE_URL +this.subreddit+"/top/.json?limit=25";
         if(this.after != null ){
             this.redditURL += "&after="+this.after;
         }
