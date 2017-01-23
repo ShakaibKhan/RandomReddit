@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.VideoView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,12 +18,17 @@ public class MainActivity extends Activity {
 
     public Button mStartButton;
     public ProgressBar mSpinner;
-    SubredditManager subredditManager;
+    public SubredditManager subredditManager;
+
+    private VideoView mVideoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Opening  screen video
+
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
         mStartButton = (Button)findViewById(R.id.btn_start_browsing);
         mSpinner = (ProgressBar) findViewById(R.id.spinner);

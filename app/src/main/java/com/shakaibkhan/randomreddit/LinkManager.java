@@ -41,7 +41,7 @@ public class LinkManager {
 
     public String getUrl(String subreddit){
         String[] url = (String[])currentLinks.get(subreddit);
-        if((int)this.positions.get(subreddit) > url.length){
+        if((int)this.positions.get(subreddit) >= url.length){
             this.positions.put(subreddit,0);
             getMoreContent(subreddit);
         }
@@ -52,15 +52,18 @@ public class LinkManager {
 
     public String getTitle(String subreddit){
         String[] titles = (String[])currentTitles.get(subreddit);
+        if((int)this.positions.get(subreddit) >= titles.length){
+            return "";
+        }
         return titles[(int)this.positions.get(subreddit)-1];
     }
 
     public void getMoreContent(String subreddit){
         //Load more links here
         currentLinks.put(subreddit,newLinks.get(subreddit));
-        currentLinks.put(subreddit,newLinks.get(subreddit));
-        currentLinks.put(subreddit,newLinks.get(subreddit));
-        currentLinks.put(subreddit,newLinks.get(subreddit));
+        currentTitles.put(subreddit,newTitles.get(subreddit));
+        currentOver_18s.put(subreddit,newOver_18s.get(subreddit));
+        currentAfter.put(subreddit,newAfter.get(subreddit));
         this.subredditManager.loadMoreSubredditContent(subreddit,this);
     }
 

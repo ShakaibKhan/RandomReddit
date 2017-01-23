@@ -29,6 +29,9 @@ public class PostSlidingFragment extends Fragment {
     private String url = null;
     private String title = null;
 
+    public LinkManager linkManager;
+    public PostCalculator postCalculator;
+
     public void setUrl(String urlImage){
         this.url = urlImage;
     }
@@ -36,6 +39,22 @@ public class PostSlidingFragment extends Fragment {
     public void setTitle(String title){
         this.title = title;
     }
+
+    public void setManagersAndExecute(PostCalculator pc, LinkManager lm){
+        this.postCalculator = pc;
+        this.linkManager = lm;
+        executeNewPost();
+    }
+
+    public void executeNewPost(){
+        String postSubreddit = postCalculator.getNextSubreddit();
+
+        //Set the title, image url, and age restriction of the post
+        this.setUrl(linkManager.getUrl(postSubreddit));
+        this.setTitle(linkManager.getTitle(postSubreddit));
+    }
+
+    int index = 1;
 
     @Override
     public View  onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance){
@@ -48,6 +67,15 @@ public class PostSlidingFragment extends Fragment {
         mPostTitle.setText(this.title);
         return rootView;
     }
+//    @Override
+//    public void setUserVisibleHint(boolean isVisibleToUser) {
+//        super.setUserVisibleHint(isVisibleToUser);
+//        if (isVisibleToUser) {
+//
+//        }else{
+//            this.executeNewPost();
+//        }
+//    }
 
     public void setImage(String url){
         Glide.with(this).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {

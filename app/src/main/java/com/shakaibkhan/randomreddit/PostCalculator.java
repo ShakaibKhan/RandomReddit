@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 
 public class PostCalculator {
-    private Hashtable subTotals = new Hashtable();
+    public Hashtable subTotals = new Hashtable();
     private int total = 0;
     private String[] subreddits;
 
