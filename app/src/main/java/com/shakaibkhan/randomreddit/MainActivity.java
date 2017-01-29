@@ -2,15 +2,14 @@ package com.shakaibkhan.randomreddit;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.VideoView;
-
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
 
 
@@ -28,6 +27,17 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //Opening  screen video
+        mVideoView = (VideoView) findViewById(R.id.openingVideo);
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setLooping(true);
+            }
+        });
+
+        String path = "android.resource://" + getPackageName() + "/" + R.raw.redditclash;
+        mVideoView.setVideoURI(Uri.parse(path));
+        mVideoView.start();
 
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
         mStartButton = (Button)findViewById(R.id.btn_start_browsing);

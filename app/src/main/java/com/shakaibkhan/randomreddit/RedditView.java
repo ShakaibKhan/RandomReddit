@@ -19,7 +19,7 @@ import java.util.Map;
  */
 
 public class RedditView extends FragmentActivity {
-    private ViewPager mViewPager;
+    public ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
     public static LinkManager linkManager;
     private Hashtable currentLinks;
@@ -43,21 +43,27 @@ public class RedditView extends FragmentActivity {
         this.mViewPager.setAdapter(mPagerAdapter);
         this.mViewPager.setCurrentItem(1000);
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
+
             @Override
             public void onPageSelected(int position){
-                if (mViewPager.getAdapter() != null) {
-                    ScreenSlidePagerAdapter adapter = (ScreenSlidePagerAdapter) mViewPager.getAdapter();
-                    PostSlidingFragment fragment = (PostSlidingFragment) adapter.getItem(position);
-                    if (fragment != null) {
-                        fragment.executeNewPost();
-                    }
-                }
+                //mViewPager.getAdapter().notifyDataSetChanged();
             }
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {}
+            public void onPageScrolled(int position, float arg1, int arg2) {
+//                if (mViewPager.getAdapter() != null) {
+//                    ScreenSlidePagerAdapter adapter = (ScreenSlidePagerAdapter) mViewPager.getAdapter();
+//                    PostSlidingFragment fragment = (PostSlidingFragment) adapter.getItem(position);
+//                    if (fragment != null) {
+//                        fragment.executeNewPost();
+//                    }
+//                }
+            }
             @Override
-            public void onPageScrollStateChanged(int arg0) {
-                //mViewPager.getAdapter().notifyDataSetChanged();
+            public void onPageScrollStateChanged(int state) {
+//                if(state == mViewPager.SCROLL_STATE_DRAGGING){
+//                    mViewPager.getAdapter().notifyDataSetChanged();
+//                }
+                //
             }
         });
 

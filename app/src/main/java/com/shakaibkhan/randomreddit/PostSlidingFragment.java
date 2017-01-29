@@ -2,6 +2,7 @@ package com.shakaibkhan.randomreddit;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,7 @@ public class PostSlidingFragment extends Fragment {
 
     public LinkManager linkManager;
     public PostCalculator postCalculator;
-
+    private ViewPager mViewPager;
     public void setUrl(String urlImage){
         this.url = urlImage;
     }
@@ -67,27 +68,33 @@ public class PostSlidingFragment extends Fragment {
         mPostTitle.setText(this.title);
         return rootView;
     }
-//    @Override
-//    public void setUserVisibleHint(boolean isVisibleToUser) {
-//        super.setUserVisibleHint(isVisibleToUser);
-//        if (isVisibleToUser) {
-//
-//        }else{
-//            this.executeNewPost();
-//        }
-//    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+        }else{
+            //mViewPager.getAdapter().notifyDataSetChanged();
+        }
+    }
 
     public void setImage(String url){
         Glide.with(this).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
                 mProgressBar.setVisibility(View.GONE);
+                mPostTitle.setVisibility(View.VISIBLE);
+                mImageDisplay.setVisibility(View.GONE);
+                mImageDisplay.setVisibility(View.VISIBLE);
                 return false;
             }
 
             @Override
             public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                 mProgressBar.setVisibility(View.GONE);
+                mPostTitle.setVisibility(View.VISIBLE);
+                mImageDisplay.setVisibility(View.GONE);
+                mImageDisplay.setVisibility(View.VISIBLE);
                 return false;
             }
         })
