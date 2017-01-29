@@ -55,7 +55,8 @@ public class LinkManager {
         if((int)this.positions.get(subreddit) >= titles.length){
             return "";
         }
-        return titles[(int)this.positions.get(subreddit)-1];
+        return titles[(int)this.positions.get(subreddit)-1]
+                + "\n r/" + subreddit;
     }
 
     public void getMoreContent(String subreddit){

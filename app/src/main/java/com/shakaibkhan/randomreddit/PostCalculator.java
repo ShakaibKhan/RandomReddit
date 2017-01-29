@@ -21,6 +21,14 @@ public class PostCalculator {
         }
     }
 
+    public void changeSubtotalBy(String sr, int by){
+        subTotals.put(sr,(int)subTotals.get(sr) + by);
+        total += by;
+
+        // minimum subtotal and total
+        if((int)subTotals.get(sr) <= 0){subTotals.put(sr,(int)subTotals.get(sr) + 1); total++;}
+    }
+
     public String getNextSubreddit(){
         String[] subredditPool =  new String[total];
         Random random = new Random();

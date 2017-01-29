@@ -1,8 +1,8 @@
 package com.shakaibkhan.randomreddit;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,15 +24,19 @@ import com.bumptech.glide.request.target.Target;
 public class PostSlidingFragment extends Fragment {
     private ImageView mImageDisplay;
     private ProgressBar mProgressBar;
-    private TextView mPostTitle;
+    public TextView mPostTitle;
     private int fragmentPostion = 0;
 
-    private String url = null;
-    private String title = null;
+    public String url = null;
+    public String title = null;
 
     public LinkManager linkManager;
     public PostCalculator postCalculator;
-    private ViewPager mViewPager;
+    public OnInvisibleListener mCallback;
+    public boolean isAttached = false;
+
+    public String postSubreddit;
+
     public void setUrl(String urlImage){
         this.url = urlImage;
     }
@@ -48,14 +52,16 @@ public class PostSlidingFragment extends Fragment {
     }
 
     public void executeNewPost(){
-        String postSubreddit = postCalculator.getNextSubreddit();
-
+        postSubreddit = postCalculator.getNextSubreddit();
         //Set the title, image url, and age restriction of the post
         this.setUrl(linkManager.getUrl(postSubreddit));
         this.setTitle(linkManager.getTitle(postSubreddit));
     }
 
-    int index = 1;
+    public void refreshGonePost(){
+        this.mPostTitle.setText(title);
+        this.setImage(url);
+    }
 
     @Override
     public View  onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance){
@@ -63,18 +69,23 @@ public class PostSlidingFragment extends Fragment {
         mImageDisplay = (ImageView) rootView.findViewById(R.id.image_displayed);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         mPostTitle = (TextView) rootView.findViewById(R.id.title_displayed);
-
-        setImage(url);
-        mPostTitle.setText(this.title);
+        this.mPostTitle.setText(title);
+        this.setImage(url);
         return rootView;
     }
+    int it = 0;
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-
+            if(isAttached){
+                mCallback.setOldSubreddit(postSubreddit);
+            }
         }else{
-            //mViewPager.getAdapter().notifyDataSetChanged();
+            if(isAttached){
+                executeNewPost();
+                mCallback.refreshPost(this);
+            }
         }
     }
 
@@ -99,11 +110,41 @@ public class PostSlidingFragment extends Fragment {
             }
         })
         .into(mImageDisplay);
-
     }
-
 
     public void setFragmentPostion(int postion){
         fragmentPostion = postion;
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        return;
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+    }
+
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        isAttached = true;
+
+        try{
+            mCallback = (OnInvisibleListener) context;
+        }catch(ClassCastException e){
+            throw new ClassCastException(context.toString()+ " did not implement OnInvisibleListener");
+        }
+
+    }
+
+    public interface OnInvisibleListener{
+        public void refreshPost(PostSlidingFragment psf);
+
+        public void setOldSubreddit(String subreddit);
+    }
  }
+
+

@@ -1,6 +1,5 @@
 package com.shakaibkhan.randomreddit;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,16 +8,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.widget.ImageView;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 
 /**
  * Created by shakaibkhan on 2017-01-05.
  */
 
-public class RedditView extends FragmentActivity {
+public class RedditView extends FragmentActivity implements PostSlidingFragment.OnInvisibleListener {
     public ViewPager mViewPager;
     private PagerAdapter mPagerAdapter;
     public static LinkManager linkManager;
@@ -26,12 +23,17 @@ public class RedditView extends FragmentActivity {
     private Hashtable currentTitles;
     private Hashtable currentAfters;
     private Hashtable currentOver_18s;
-
-    public final int numberOfPages = 3;
-
     public static PostCalculator postCalculator;
+    public PostSlidingFragment slidingFragment;
+    public String oldSubreddit = "";
 
+    public void refreshPost(PostSlidingFragment psf){
+        psf.refreshGonePost();
+    }
 
+    public void setOldSubreddit(String subreddit){
+        oldSubreddit = subreddit;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,29 +45,35 @@ public class RedditView extends FragmentActivity {
         this.mViewPager.setAdapter(mPagerAdapter);
         this.mViewPager.setCurrentItem(1000);
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
-
+            int oldPosition = mViewPager.getCurrentItem();
             @Override
             public void onPageSelected(int position){
-                //mViewPager.getAdapter().notifyDataSetChanged();
+
+                //Change the subtotals of the subreddit depending on which way the user scrolls
+
+
+                if(oldSubreddit != ""){
+                    //Scroll right
+                    if(position > oldPosition){
+                        postCalculator.changeSubtotalBy(oldSubreddit, 1);
+                    }
+                    //Scroll left
+                    else if(position < oldPosition){
+                        postCalculator.changeSubtotalBy(oldSubreddit, -1);
+                    }
+                }
+
+                oldPosition = position;
             }
             @Override
             public void onPageScrolled(int position, float arg1, int arg2) {
-//                if (mViewPager.getAdapter() != null) {
-//                    ScreenSlidePagerAdapter adapter = (ScreenSlidePagerAdapter) mViewPager.getAdapter();
-//                    PostSlidingFragment fragment = (PostSlidingFragment) adapter.getItem(position);
-//                    if (fragment != null) {
-//                        fragment.executeNewPost();
-//                    }
-//                }
             }
             @Override
             public void onPageScrollStateChanged(int state) {
-//                if(state == mViewPager.SCROLL_STATE_DRAGGING){
-//                    mViewPager.getAdapter().notifyDataSetChanged();
-//                }
-                //
+
             }
-        });
+        })
+        ;
 
         //Try to get the initially loaded image urls
         Intent intent = getIntent();
@@ -92,24 +100,17 @@ public class RedditView extends FragmentActivity {
     }
 
     public class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        private Fragment[] fragments = new Fragment[3];
-        private int index = 0;
-        int oldPosition = 1000;
 
-        public String oldSubreddit;
         public ScreenSlidePagerAdapter(FragmentManager fm){
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position){
-
-            PostSlidingFragment slidingFragment = new PostSlidingFragment();
+            slidingFragment = new PostSlidingFragment();
             slidingFragment.setManagersAndExecute(postCalculator,linkManager);
             slidingFragment.setFragmentPostion(position);
-
             return slidingFragment;
-            //mViewPager.getAdapter().notifyDataSetChanged();
         }
 
         @Override
