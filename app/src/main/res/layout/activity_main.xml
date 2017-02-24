@@ -16,13 +16,52 @@
         android:id="@+id/openingVideo"
         />
 
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/btn_start_browsing"
-    android:text="@string/start_browsing_text"
-    android:onClick="openReddit"
-    android:visibility="gone"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/button_view"
+        android:background="#DD808080">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_login"
+            android:text="@string/login_text"
+            android:onClick="openReddit"
+            android:visibility="gone"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/username_text"
+                android:hint="Username"
+                android:layout_centerVertical="true"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/password_text"
+                android:hint="Password"
+                android:layout_alignParentBottom="true"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_create_account"
+            android:text="@string/create_account_text"
+            android:onClick="openReddit"
+            android:background="#00ffffff"/>
+
+    </LinearLayout>
 
     <ProgressBar
     android:layout_height="wrap_content"

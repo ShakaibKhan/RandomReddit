@@ -40,10 +40,12 @@ public class RedditParser extends AsyncTask<String, String, String> {
         this.subreddit = sr;
         this.handler = handle;
     }
+
     RedditParser(String sr, String after){
         this.subreddit = sr;
         this.after = after;
     }
+
     RedditParser(String sr){
         this.subreddit = sr;
     }

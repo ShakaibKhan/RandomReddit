@@ -1,5 +1,7 @@
 package com.shakaibkhan.randomreddit;
 
+import android.util.Log;
+
 import java.util.Hashtable;
 
 /**
@@ -47,6 +49,11 @@ public class LinkManager {
         }
         //updating the position of the particular subreddit
         this.positions.put(subreddit,(int)this.positions.get(subreddit)+1);
+        if(((int)this.positions.get(subreddit)-1) == 0){
+            if(url.length == 0){
+                Log.e("a","a");
+            }
+        }
         return url[(int)this.positions.get(subreddit)-1];
     }
 

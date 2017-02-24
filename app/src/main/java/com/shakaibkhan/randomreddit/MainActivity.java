@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
         mVideoView.start();
 
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
-        mStartButton = (Button)findViewById(R.id.btn_start_browsing);
+        mStartButton = (Button)findViewById(R.id.btn_login);
         mSpinner = (ProgressBar) findViewById(R.id.spinner);
         this.subredditManager = new SubredditManager(subreddits,mSpinner,mStartButton,true);
         subredditManager.getAllSubredditStarted();
@@ -63,11 +63,6 @@ public class MainActivity extends Activity {
         openBrowser.putExtras(bundle);
         startActivity(openBrowser);
     }
-
-//        mImageDisplay = (ImageView) findViewById(R.id.image_displayed);
-//
-//        GlideDrawableImageViewTarget imageViewTarget = new GlideDrawableImageViewTarget(mImageDisplay);
-//        Glide.with(this).load("http://i.imgur.com/GXx2yPW.gif").diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mImageDisplay);
 
 }
 

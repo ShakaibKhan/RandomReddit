@@ -54,11 +54,11 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
 
                 if(oldSubreddit != ""){
                     //Scroll right
-                    if(position > oldPosition){
+                    if(position < oldPosition){
                         postCalculator.changeSubtotalBy(oldSubreddit, 1);
                     }
                     //Scroll left
-                    else if(position < oldPosition){
+                    else if(position > oldPosition){
                         postCalculator.changeSubtotalBy(oldSubreddit, -1);
                     }
                 }

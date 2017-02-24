@@ -22,7 +22,8 @@ import java.util.List;
 
 public class SubredditManager {
 
-    public String[] subredditNames = new String[10];
+    public static final int NUMBER_OF_SUBREDDITS = 10;
+    public String[] subredditNames = new String[NUMBER_OF_SUBREDDITS];
     private Enumeration subs ;
     private Handler handler ;
     public int numberOfFinishedSubreddits = 0;
