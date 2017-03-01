@@ -3,6 +3,7 @@
     <string name="start_browsing_text">Start Browsing</string>
     <string name="login_text">Login</string>
     <string name="create_account_text">Don\'t have an account? <blue>Sign Up</blue></string>
+    <string name="skip_post_text">Skip Post</string>
     <string-array
         name="subreddit_list">
         <item>pics</item>

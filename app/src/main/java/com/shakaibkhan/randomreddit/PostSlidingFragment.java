@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -14,7 +16,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.bumptech.glide.request.target.Target;
 
 /**
@@ -37,12 +38,22 @@ public class PostSlidingFragment extends Fragment {
 
     public String postSubreddit;
 
+    private ImageView mVoteDisplay;
+
     public void setUrl(String urlImage){
         this.url = urlImage;
     }
 
     public void setTitle(String title){
         this.title = title;
+    }
+
+    public Animation animationFadeOut;
+
+    public void setAnimation(Context mContext){
+        animationFadeOut = AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
+        animationFadeOut.setRepeatCount(Animation.INFINITE);
+        animationFadeOut.setRepeatMode(Animation.RESTART);
     }
 
     public void setManagersAndExecute(PostCalculator pc, LinkManager lm){
@@ -61,6 +72,8 @@ public class PostSlidingFragment extends Fragment {
     public void refreshGonePost(){
         this.mPostTitle.setText(title);
         this.setImage(url);
+        mVoteDisplay.setVisibility(View.VISIBLE);
+        mVoteDisplay.setImageResource(R.drawable.upvote);
     }
 
     @Override
@@ -69,8 +82,10 @@ public class PostSlidingFragment extends Fragment {
         mImageDisplay = (ImageView) rootView.findViewById(R.id.image_displayed);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         mPostTitle = (TextView) rootView.findViewById(R.id.title_displayed);
+        mVoteDisplay = (ImageView) rootView.findViewById(R.id.vote_display);
         this.mPostTitle.setText(title);
         this.setImage(url);
+
         return rootView;
     }
     int it = 0;
@@ -138,6 +153,20 @@ public class PostSlidingFragment extends Fragment {
             throw new ClassCastException(context.toString()+ " did not implement OnInvisibleListener");
         }
 
+    }
+
+    //Fades out the upvote symbol using anim and it's interporlator
+    public void setUpVote(){
+        mVoteDisplay.setImageResource(R.drawable.upvote);
+        mVoteDisplay.setVisibility(View.GONE);
+        mVoteDisplay.startAnimation(animationFadeOut);
+    }
+
+    public void setDownVote(){
+        mVoteDisplay.setImageResource(R.drawable.downvote);
+        mVoteDisplay.setVisibility(View.GONE);
+        mVoteDisplay.startAnimation(animationFadeOut);
+        //mVoteDisplay.animation
     }
 
     public interface OnInvisibleListener{

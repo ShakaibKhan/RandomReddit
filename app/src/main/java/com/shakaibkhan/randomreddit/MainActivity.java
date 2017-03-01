@@ -1,6 +1,7 @@
 package com.shakaibkhan.randomreddit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import android.widget.VideoView;
 import java.util.Hashtable;
 
@@ -18,7 +20,7 @@ public class MainActivity extends Activity {
     public Button mStartButton;
     public ProgressBar mSpinner;
     public SubredditManager subredditManager;
-
+    private Context mContext;
     private VideoView mVideoView;
 
     @Override
@@ -41,6 +43,18 @@ public class MainActivity extends Activity {
 
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
         mStartButton = (Button)findViewById(R.id.btn_login);
+        mContext = getApplicationContext();
+
+        mStartButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast toast = Toast.makeText(mContext,"Start Browsing",Toast.LENGTH_SHORT);
+                toast.show();
+                return true;
+            }
+        });
+
+
         mSpinner = (ProgressBar) findViewById(R.id.spinner);
         this.subredditManager = new SubredditManager(subreddits,mSpinner,mStartButton,true);
         subredditManager.getAllSubredditStarted();

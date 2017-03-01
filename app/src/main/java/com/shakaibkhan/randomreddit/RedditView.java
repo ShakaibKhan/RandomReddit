@@ -1,5 +1,6 @@
 package com.shakaibkhan.randomreddit;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -26,6 +28,8 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
     public static PostCalculator postCalculator;
     public PostSlidingFragment slidingFragment;
     public String oldSubreddit = "";
+
+    private Context mContext;
 
     public void refreshPost(PostSlidingFragment psf){
         psf.refreshGonePost();
@@ -51,18 +55,18 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
 
                 //Change the subtotals of the subreddit depending on which way the user scrolls
 
-
                 if(oldSubreddit != ""){
                     //Scroll right
                     if(position < oldPosition){
                         postCalculator.changeSubtotalBy(oldSubreddit, 1);
+                        slidingFragment.setUpVote();
                     }
                     //Scroll left
                     else if(position > oldPosition){
                         postCalculator.changeSubtotalBy(oldSubreddit, -1);
+                        slidingFragment.setDownVote();
                     }
                 }
-
                 oldPosition = position;
             }
             @Override
@@ -88,6 +92,8 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
         this.linkManager= new LinkManager(currentLinks,currentAfters,currentTitles,currentOver_18s,subreddits);
         this.postCalculator = new PostCalculator(subreddits);
+
+        mContext = this;
     }
 
     @Override
@@ -110,6 +116,7 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
             slidingFragment = new PostSlidingFragment();
             slidingFragment.setManagersAndExecute(postCalculator,linkManager);
             slidingFragment.setFragmentPostion(position);
+            slidingFragment.setAnimation(mContext);
             return slidingFragment;
         }
 
