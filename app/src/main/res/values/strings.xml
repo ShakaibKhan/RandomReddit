@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Reddit Clash</string>
+    <string name="app_name">Meme Clash</string>
     <string name="start_browsing_text">Start Browsing</string>
     <string name="retry_browsing_text">Retry Connecting</string>
     <string name="retry_browsing_textview_text">No internet connection</string>

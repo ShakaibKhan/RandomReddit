@@ -112,7 +112,7 @@ public class PostSlidingFragment extends Fragment {
                 shareIntent.setType("image/*");
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 shareIntent.setAction(Intent.ACTION_SEND);
-                String message = url+" \n\nThis image was sent from Reddit Clash";
+                String message = url+" \n\nThis image was sent from Meme Clash";
                 shareIntent.putExtra(Intent.EXTRA_TEXT, message);
                 shareIntent.removeExtra(Intent.EXTRA_KEY_EVENT);
 
