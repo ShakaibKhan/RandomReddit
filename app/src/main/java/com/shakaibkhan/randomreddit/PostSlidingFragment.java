@@ -1,16 +1,18 @@
 package com.shakaibkhan.randomreddit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -23,9 +25,14 @@ import com.bumptech.glide.request.target.Target;
  */
 
 public class PostSlidingFragment extends Fragment {
+
     private ImageView mImageDisplay;
     private ProgressBar mProgressBar;
+
     public TextView mPostTitle;
+    private ImageButton mShareButton;
+    public Switch mNsfwSwitch = null;
+
     private int fragmentPostion = 0;
 
     public String url = null;
@@ -38,8 +45,6 @@ public class PostSlidingFragment extends Fragment {
 
     public String postSubreddit;
 
-    private ImageView mVoteDisplay;
-
     public void setUrl(String urlImage){
         this.url = urlImage;
     }
@@ -48,13 +53,7 @@ public class PostSlidingFragment extends Fragment {
         this.title = title;
     }
 
-    public Animation animationFadeOut;
-
-    public void setAnimation(Context mContext){
-        animationFadeOut = AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
-        animationFadeOut.setRepeatCount(Animation.INFINITE);
-        animationFadeOut.setRepeatMode(Animation.RESTART);
-    }
+    public Context mContext;
 
     public void setManagersAndExecute(PostCalculator pc, LinkManager lm){
         this.postCalculator = pc;
@@ -65,15 +64,35 @@ public class PostSlidingFragment extends Fragment {
     public void executeNewPost(){
         postSubreddit = postCalculator.getNextSubreddit();
         //Set the title, image url, and age restriction of the post
-        this.setUrl(linkManager.getUrl(postSubreddit));
-        this.setTitle(linkManager.getTitle(postSubreddit));
+        if(mNsfwSwitch != null) {
+            boolean nsfwon = mNsfwSwitch.isChecked();
+            String thisUrl = linkManager.getUrl(postSubreddit, nsfwon);
+            while(thisUrl == "NSFW"){
+                postSubreddit = postCalculator.getNextSubreddit();
+                thisUrl = linkManager.getUrl(postSubreddit, nsfwon);
+            }
+            this.setUrl(thisUrl);
+
+        }else{
+            this.setUrl(linkManager.getUrl(postSubreddit));
+        }
+
+        if(this.url == "NSFW"){
+            this.setTitle("NSFW POST");
+        }else{
+            this.setTitle(linkManager.getTitle(postSubreddit));
+        }
+
+
     }
 
     public void refreshGonePost(){
         this.mPostTitle.setText(title);
         this.setImage(url);
-        mVoteDisplay.setVisibility(View.VISIBLE);
-        mVoteDisplay.setImageResource(R.drawable.upvote);
+    }
+
+    public void setPostTitle(){
+        this.mPostTitle.setText(title);
     }
 
     @Override
@@ -81,21 +100,45 @@ public class PostSlidingFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post_sliding,container,false);
         mImageDisplay = (ImageView) rootView.findViewById(R.id.image_displayed);
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
-        mPostTitle = (TextView) rootView.findViewById(R.id.title_displayed);
-        mVoteDisplay = (ImageView) rootView.findViewById(R.id.vote_display);
-        this.mPostTitle.setText(title);
         this.setImage(url);
+        mPostTitle = (TextView) rootView.findViewById(R.id.title_displayed);
+        mPostTitle.setText(title);
+        mShareButton = (ImageButton) rootView.findViewById(R.id.share_button);
 
+        //Start action send intent to share image urls
+        mShareButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                Intent shareIntent = new Intent();
+                shareIntent.setType("image/*");
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                shareIntent.setAction(Intent.ACTION_SEND);
+                String message = url+" \n\nThis image was sent from Reddit Clash";
+                shareIntent.putExtra(Intent.EXTRA_TEXT, message);
+                shareIntent.removeExtra(Intent.EXTRA_KEY_EVENT);
+
+                Intent chooser = Intent.createChooser(shareIntent, "Share This Image");
+                try{
+                    startActivity(chooser);
+                }catch(Exception e){
+                    Toast.makeText(mContext, "Please Download A Social Media App To Share Pics", Toast.LENGTH_LONG);
+                }
+            }
+        });
         return rootView;
     }
-    int it = 0;
+
+    public void setViewPagerElements(Switch nsfws ){
+        mNsfwSwitch = nsfws;
+    }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            if(isAttached){
+            if(isAttached) {
                 mCallback.setOldSubreddit(postSubreddit);
             }
+            //setPostTitle();
         }else{
             if(isAttached){
                 executeNewPost();
@@ -146,7 +189,6 @@ public class PostSlidingFragment extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         isAttached = true;
-
         try{
             mCallback = (OnInvisibleListener) context;
         }catch(ClassCastException e){
@@ -155,24 +197,14 @@ public class PostSlidingFragment extends Fragment {
 
     }
 
-    //Fades out the upvote symbol using anim and it's interporlator
-    public void setUpVote(){
-        mVoteDisplay.setImageResource(R.drawable.upvote);
-        mVoteDisplay.setVisibility(View.GONE);
-        mVoteDisplay.startAnimation(animationFadeOut);
-    }
-
-    public void setDownVote(){
-        mVoteDisplay.setImageResource(R.drawable.downvote);
-        mVoteDisplay.setVisibility(View.GONE);
-        mVoteDisplay.startAnimation(animationFadeOut);
-        //mVoteDisplay.animation
-    }
-
     public interface OnInvisibleListener{
         public void refreshPost(PostSlidingFragment psf);
 
         public void setOldSubreddit(String subreddit);
+    }
+
+    public void setContext(Context c){
+        mContext = c;
     }
  }
 

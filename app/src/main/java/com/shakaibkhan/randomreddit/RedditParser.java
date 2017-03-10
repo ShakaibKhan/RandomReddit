@@ -1,18 +1,17 @@
 package com.shakaibkhan.randomreddit;
 
+
 import android.content.Context;
+import android.icu.util.TimeUnit;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import org.json.*;
-
-import java.util.HashMap;
 
 
 /**
@@ -36,24 +35,20 @@ public class RedditParser extends AsyncTask<String, String, String> {
     public String redditResponse;
     private Handler handler = null;
 
-    RedditParser(String sr, Handler handle){
+    private Context mContext;
+
+
+    RedditParser(String sr, Handler handle, Context context){
         this.subreddit = sr;
         this.handler = handle;
+        this.mContext = context;
     }
 
-    RedditParser(String sr, String after){
-        this.subreddit = sr;
-        this.after = after;
-    }
-
-    RedditParser(String sr){
-        this.subreddit = sr;
-    }
-
-    RedditParser(String sr, Handler handle, String af){
+    RedditParser(String sr, Handler handle, String af, Context context){
         subreddit = sr;
         this.after = af;
         this.handler = handle;
+        this.mContext = context;
     }
 
     private void buildUrl(){
@@ -78,10 +73,16 @@ public class RedditParser extends AsyncTask<String, String, String> {
         redditResponse = null;
         this.buildUrl();
         Request request = new Request.Builder().url(this.redditURL).build();
-        try{
-            Response response = webClient.newCall(request).execute();
-            redditResponse = response.body().string();
-        }catch(Exception e){e.printStackTrace();}
+        if(MainActivity.isNetworkAvailable(mContext)){
+            try{
+                Response response = webClient.newCall(request).execute();
+                redditResponse = response.body().string();
+            }catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+
         return  redditResponse;
         }
 
@@ -95,7 +96,16 @@ public class RedditParser extends AsyncTask<String, String, String> {
         super.onPostExecute(result);
         JSONObject redditJson = null;
         JSONArray redditJsonArray = null;
+
                 try{
+            //NO NETWORK CONNECTION SO PLEASE TRY AGAIN
+            if(redditResponse == null || redditResponse.isEmpty()){
+                Message message = handler.obtainMessage();
+                message.obj = "NOCONNECTION";
+                this.handler.sendMessage(message);
+                return;
+            }
+
             redditJson = new JSONObject(redditResponse);
             redditJson = redditJson.getJSONObject("data");
             this.after = redditJson.getString("after");

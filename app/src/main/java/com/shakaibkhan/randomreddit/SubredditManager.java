@@ -1,14 +1,19 @@
 package com.shakaibkhan.randomreddit;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.res.TypedArrayUtils;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +35,9 @@ public class SubredditManager {
     public ProgressBar mSpinner;
     public Button mStartButton;
     public boolean startPage;
+    public Button retryButton;
+    public ViewPager viewPager;
+    public TextView retryText;
 
     //
     public Hashtable subredditLinks = new Hashtable();
@@ -40,20 +48,28 @@ public class SubredditManager {
 
     public LinkManager linkManager;
 
-    SubredditManager(String[] srs, ProgressBar spin, Button btn, boolean start){
+    //Used at the main activity
+    SubredditManager(String[] srs, ProgressBar spin, Button btn, boolean start,Button rtbt, Context context){
         this.startPage = start;
         subredditNames = srs;
         this.mSpinner = spin;
         this.mStartButton = btn;
+        this.retryButton = rtbt;
         this.handler = new Handler(){
             @Override
             public void handleMessage(Message message){
                 if(message.obj != null){
                     if(startPage){
                         numberOfFinishedSubreddits++;
-                        if(numberOfFinishedSubreddits == subredditNames.length){
+                        if((numberOfFinishedSubreddits == subredditNames.length) && (!message.obj.equals("NOCONNECTION"))){
                             mSpinner.setVisibility(View.GONE);
                             mStartButton.setVisibility(View.VISIBLE);
+                        }
+                        if(message.obj.equals("NOCONNECTION")){
+                            mSpinner.setVisibility(View.GONE);
+                            retryButton.setVisibility(View.VISIBLE);
+                            return;
+                            //numberOfFinishedSubreddits = 0;
                         }
                     }
                     //Get the links returned by the parser
@@ -70,19 +86,29 @@ public class SubredditManager {
             }
         };
         for (String srn: subredditNames) {
-            subredditFeed.put(srn,new RedditParser(srn,this.handler));
+            subredditFeed.put(srn,new RedditParser(srn,this.handler,context));
         }
 
         subs = subredditFeed.keys();
     }
 
-    SubredditManager(String[] srs, LinkManager lm){
+    //Only used by viewpager class
+    SubredditManager(String[] srs, LinkManager lm, Button retryB, Context context, ViewPager vp, TextView rtt){
         subredditNames = srs;
         this.linkManager = lm;
+        this.viewPager = vp;
+        this.retryButton = retryB;
+        this.retryText =rtt;
         this.handler = new Handler(){
             @Override
             public void handleMessage(Message message){
                 if(message.obj != null){
+                    if(message.obj.equals("NOCONNECTION")){
+                        viewPager.setVisibility(View.GONE);
+                        retryButton.setVisibility(View.VISIBLE);
+                        retryText.setVisibility(View.VISIBLE);
+                        return;
+                    }
 
                     //Get the links returned by the parser
                     RedditParser rp = (RedditParser) subredditFeed.get(message.obj);
@@ -96,7 +122,49 @@ public class SubredditManager {
             }
         };
         for (String srn: subredditNames) {
-            subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)lm.currentAfter.get(srn)));
+            subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)lm.currentAfter.get(srn),context));
+        }
+
+        subs = subredditFeed.keys();
+    }
+
+    SubredditManager(String[] srs, ProgressBar spin, Button btn, boolean start, Hashtable afters, Button retryB, Context context){
+        this.startPage = start;
+        subredditNames = srs;
+        this.mSpinner = spin;
+        this.mStartButton = btn;
+        this.retryButton = retryB;
+        this.handler = new Handler(){
+            @Override
+            public void handleMessage(Message message){
+                if(message.obj != null){
+                    if(startPage){
+                        numberOfFinishedSubreddits++;
+                        if((numberOfFinishedSubreddits == subredditNames.length) && (!message.obj.equals("NOCONNECTION"))){
+                            mSpinner.setVisibility(View.GONE);
+                            mStartButton.setVisibility(View.VISIBLE);
+                        }
+                        if(message.obj.equals("NOCONNECTION")){
+                            mSpinner.setVisibility(View.GONE);
+                            retryButton.setVisibility(View.VISIBLE);
+                            return;
+                        }
+                    }
+                    //Get the links returned by the parser
+                    RedditParser rp = (RedditParser) subredditFeed.get(message.obj);
+                    int[] indexes = getNullIndexes(rp.redditLinks);
+                    //clears all reddit links that are null while leaving the null titles, over 18's, and anyother content intact
+
+
+                    subredditLinks.put(message.obj,cleanArray(rp.redditLinks,indexes));
+                    subredditAfter.put(message.obj,rp.after);
+                    subredditTitles.put(message.obj,cleanArray(rp.redditTitles,indexes));
+                    subredditOver_18.put(message.obj,cleanArray(rp.redditOver_18,indexes));
+                }
+            }
+        };
+        for (String srn: subredditNames) {
+            subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)afters.get(srn),context));
         }
 
         subs = subredditFeed.keys();
@@ -126,9 +194,9 @@ public class SubredditManager {
         return false;
     }
 
-    public void loadMoreSubredditContent(String srn, LinkManager lm){
+    public void loadMoreSubredditContent(String srn, LinkManager lm,Context context){
         this.linkManager = lm;
-        subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)lm.currentAfter.get(srn)));
+        subredditFeed.put(srn,new RedditParser(srn,this.handler,(String)lm.currentAfter.get(srn),context));
         ((RedditParser)subredditFeed.get(srn)).execute("");
     }
 
@@ -161,7 +229,6 @@ public class SubredditManager {
         }
         return ret;
     }
-
 
     public Hashtable getSubredditLinks(){
         return this.subredditLinks;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_reddit_parser"
     android:layout_width="match_parent"
@@ -7,9 +7,65 @@
     android:orientation="vertical"
     tools:context="com.shakaibkhan.randomreddit.RedditView">
 
+
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-</LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:text="@string/retry_browsing_textview_text"
+        android:visibility="gone"
+        android:id="@+id/retrytext_fragment"
+        />
+    <Button
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/retry_fragment"
+        android:padding="10dp"
+        android:text="@string/retry_browsing_text"
+        android:onClick="restartBrowser"
+        android:visibility="gone"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center"
+        android:id="@+id/vote_display"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:background="#FF90AFC5"
+        >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/skip_button"
+            android:text="@string/skip_post_text"
+            android:background="@drawable/button_background"
+            android:padding="5dp"
+            android:textColor="#763626"
+            />
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/nsfw_switch"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentRight="true"
+            android:text="NSFW OFF"
+            android:textColor="#763626"
+            android:layout_marginTop="10dp"/>
+    </RelativeLayout>
+</RelativeLayout>
