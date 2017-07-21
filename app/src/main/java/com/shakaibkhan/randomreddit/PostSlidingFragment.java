@@ -29,11 +29,12 @@ public class PostSlidingFragment extends Fragment {
     private ImageView mImageDisplay;
     private ProgressBar mProgressBar;
 
-    public TextView mPostTitle;
+    private TextView mPostTitle;
     private ImageButton mShareButton;
-    public Switch mNsfwSwitch = null;
+    private Switch mNsfwSwitch = null;
 
     private int fragmentPostion = 0;
+    public static final String IMAGE_URL="image";
 
     public String url = null;
     public String title = null;
@@ -98,7 +99,20 @@ public class PostSlidingFragment extends Fragment {
     @Override
     public View  onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstance){
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_post_sliding,container,false);
+
+
+        final Context context = getContext();
         mImageDisplay = (ImageView) rootView.findViewById(R.id.image_displayed);
+        mImageDisplay.setOnClickListener(
+        new View.OnClickListener(){
+            public void onClick(View view){
+                Intent intent = new Intent(context,CloseImageView.class);
+                intent.putExtra(IMAGE_URL,url);
+                startActivityForResult(intent,1);
+            }
+        });
+
+
         mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
         this.setImage(url);
         mPostTitle = (TextView) rootView.findViewById(R.id.title_displayed);

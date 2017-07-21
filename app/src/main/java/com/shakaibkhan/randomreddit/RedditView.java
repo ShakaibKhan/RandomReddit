@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -48,7 +49,7 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
     public Animation animationFadeOut;
     public Context mContext;
 
-    public Button mSkipButton;
+    public FloatingActionButton mSkipButton;
     public Switch mNsfwSwitch;
     public Button retryConnection;
     public TextView retryText;
@@ -191,7 +192,7 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
 
         mContext = this;
 
-        mSkipButton = (Button) findViewById(R.id.skip_button);
+        mSkipButton = (FloatingActionButton) findViewById(R.id.skip_button);
         mSkipButton.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 skippedPost = true;

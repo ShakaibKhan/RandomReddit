@@ -8,6 +8,11 @@
     tools:context="com.shakaibkhan.randomreddit.RedditView">
 
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/post_scroll_holder"
+        android:visibility="visible"></RelativeLayout>
     <android.support.v4.view.ViewPager
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pager"
@@ -46,17 +51,17 @@
         android:paddingBottom="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:background="#FF90AFC5"
+        android:background="#FFFFFFFF"
         >
 
-        <Button
+        <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/skip_button"
             android:text="@string/skip_post_text"
             android:background="@drawable/button_background"
             android:padding="5dp"
-            android:textColor="#763626"
+            android:textColor="#000000"
             />
         <Switch
             android:layout_width="wrap_content"
@@ -65,7 +70,7 @@
             android:layout_centerHorizontal="true"
             android:layout_alignParentRight="true"
             android:text="NSFW OFF"
-            android:textColor="#763626"
+            android:textColor="#000000"
             android:layout_marginTop="10dp"/>
     </RelativeLayout>
 </RelativeLayout>

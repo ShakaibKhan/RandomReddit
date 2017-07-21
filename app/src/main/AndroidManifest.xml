@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.shakaibkhan.randomreddit"
-    android:versionCode="2">
+    android:versionCode="4">
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/reddit_clash_icon"
@@ -25,6 +24,10 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".CloseImageView"
+            android:screenOrientation="portrait">
+            <action android:name="android.intent.action.MAIN"/>
         </activity>
     </application>
 

@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +15,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -24,13 +27,13 @@ import java.util.Hashtable;
 
 public class MainActivity extends Activity {
 
-    public Button mStartButton;
-    public ProgressBar mSpinner;
+    private Button mStartButton;
+    private ProgressBar mSpinner;
     public SubredditManager subredditManager;
     private Context mContext;
     private VideoView mVideoView;
-    public Button retryConnection;
-    public Button helpButton;
+    private Button retryConnection;
+    private ImageView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,7 @@ public class MainActivity extends Activity {
         mVideoView.setVideoURI(Uri.parse(path));
         mVideoView.start();
 
+
         String[] subreddits = getResources().getStringArray(R.array.subreddit_list);
         mStartButton = (Button)findViewById(R.id.btn_login);
         mContext = getApplicationContext();
@@ -82,11 +86,9 @@ public class MainActivity extends Activity {
             this.subredditManager = new SubredditManager(subreddits,mSpinner,mStartButton,true,retryConnection, mContext);
         }
 
-//        helpButton.setOnClickListener(
-//                @Override
-//
-//        );
 
+
+        title = (ImageView) findViewById(R.id.app_title);
         subredditManager.getAllSubredditStarted();
     }
 
