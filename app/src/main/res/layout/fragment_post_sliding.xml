@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/less_black">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,7 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="10"
-            android:background="#FF90AFC5">
+            android:elevation="2dp"
+            android:background="@color/black">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,13 +47,19 @@
             android:layout_height="100dp"
             android:layout_gravity="center" />
 
-        <ImageView
+        <ScrollView
+            android:id="@+id/image_scroll"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_gravity="center"
-            android:id="@+id/image_displayed" />
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:id="@+id/image_displayed" />
+        </ScrollView>
 
     </LinearLayout>
 </RelativeLayout>

@@ -1,24 +1,32 @@
 package com.shakaibkhan.randomreddit;
 
+
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ScrollingView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+
 
 /**
  * Created by shakaibkhan on 2016-12-31.
@@ -28,12 +36,12 @@ public class PostSlidingFragment extends Fragment {
 
     private ImageView mImageDisplay;
     private ProgressBar mProgressBar;
+    private ScrollView mScrollView;
 
     private TextView mPostTitle;
     private ImageButton mShareButton;
     private Switch mNsfwSwitch = null;
 
-    private int fragmentPostion = 0;
     public static final String IMAGE_URL="image";
 
     public String url = null;
@@ -45,6 +53,8 @@ public class PostSlidingFragment extends Fragment {
     public boolean isAttached = false;
 
     public String postSubreddit;
+
+    private int fragmentPostion;
 
     public void setUrl(String urlImage){
         this.url = urlImage;
@@ -102,6 +112,7 @@ public class PostSlidingFragment extends Fragment {
 
 
         final Context context = getContext();
+        mScrollView = (ScrollView)rootView.findViewById(R.id.image_scroll);
         mImageDisplay = (ImageView) rootView.findViewById(R.id.image_displayed);
         mImageDisplay.setOnClickListener(
         new View.OnClickListener(){
@@ -162,22 +173,24 @@ public class PostSlidingFragment extends Fragment {
     }
 
     public void setImage(String url){
-        Glide.with(this).load(url).diskCacheStrategy(DiskCacheStrategy.SOURCE).listener(new RequestListener<String, GlideDrawable>() {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC);
+        Glide.with(this).load(url).apply(requestOptions).listener(new RequestListener<Drawable>() {
             @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                 mProgressBar.setVisibility(View.GONE);
                 mPostTitle.setVisibility(View.VISIBLE);
-                mImageDisplay.setVisibility(View.GONE);
-                mImageDisplay.setVisibility(View.VISIBLE);
+                mScrollView.setVisibility(View.GONE);
+                mScrollView.setVisibility(View.VISIBLE);
                 return false;
             }
 
             @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                 mProgressBar.setVisibility(View.GONE);
                 mPostTitle.setVisibility(View.VISIBLE);
-                mImageDisplay.setVisibility(View.GONE);
-                mImageDisplay.setVisibility(View.VISIBLE);
+                mScrollView.setVisibility(View.GONE);
+                mScrollView.setVisibility(View.VISIBLE);
                 return false;
             }
         })

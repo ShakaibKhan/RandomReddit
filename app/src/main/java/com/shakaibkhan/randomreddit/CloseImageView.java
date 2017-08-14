@@ -36,8 +36,6 @@ public class CloseImageView extends Activity {
         String imageURL = intent.getStringExtra(PostSlidingFragment.IMAGE_URL);
         zoomableImage.loadUrl(imageURL);
 
-        writeToFile("output.txt",getApplicationContext());
-
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,15 +45,6 @@ public class CloseImageView extends Activity {
 
     }
 
-    private void writeToFile(String data,Context context) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
+
 
 }

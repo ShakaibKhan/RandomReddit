@@ -15,17 +15,16 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.eftimoff.viewpagertransformers.DepthPageTransformer;
+import com.eftimoff.viewpagertransformers.DrawFromBackTransformer;
+import com.eftimoff.viewpagertransformers.ForegroundToBackgroundTransformer;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 
@@ -130,6 +129,9 @@ public class RedditView extends FragmentActivity implements PostSlidingFragment.
         this.mViewPager.setOffscreenPageLimit(1);
         mPagerAdapter = new RedditView.ScreenSlidePagerAdapter(getSupportFragmentManager());
         this.mViewPager.setAdapter(mPagerAdapter);
+        this.mViewPager.setPageTransformer(true, new ForegroundToBackgroundTransformer());
+
+
         this.mViewPager.setCurrentItem(1000);
         this.mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener(){
 
